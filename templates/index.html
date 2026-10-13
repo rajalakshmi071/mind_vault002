@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070910">
+  <meta name="description" content="MindVault is your personal learning workspace.">
+  <title>MindVault | Your Second Brain</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</head>
+<body>
+  <canvas id="starfield" aria-hidden="true"></canvas>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+      <a class="brand" href="/" aria-label="MindVault home"><span class="brand-mark" aria-hidden="true"><i></i><b></b></span><span>mind<span class="brand-accent">vault</span><small>YOUR SECOND BRAIN</small></span></a>
+      <p class="nav-caption">WORKSPACE</p>
+      <nav class="nav-list">
+        <button class="nav-item active" data-section="home" type="button"><span class="nav-icon">⌂</span>Home</button>
+        <button class="nav-item" data-section="notes" type="button"><span class="nav-icon">▤</span>My Notes<span class="nav-count" id="sidebar-note-count">0</span></button>
+        <button class="nav-item planned" data-section="graph" type="button"><span class="nav-icon">⌘</span>Knowledge Graph<span class="soon">SOON</span></button>
+        <button class="nav-item planned" data-section="flashcards" type="button"><span class="nav-icon">▱</span>Flashcards<span class="soon">SOON</span></button>
+      </nav>
+      <p class="nav-caption nav-caption-lower">PERSONAL</p>
+      <nav class="nav-list">
+        <button class="nav-item planned" data-section="progress" type="button"><span class="nav-icon">◷</span>Progress<span class="soon">SOON</span></button>
+        <button class="nav-item planned" data-section="settings" type="button"><span class="nav-icon">⚙</span>Settings<span class="soon">SOON</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="local-status"><span class="online-dot"></span>LOCAL VAULT<span class="status-rule"></span><b>READY</b></div>
+        <div class="mini-profile"><span class="avatar">S</span><span><b>Student space</b><small>Personal workspace</small></span></div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="icon-button menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+        <div class="breadcrumb">VAULT <span>/</span> <b id="current-section">OVERVIEW</b></div>
+        <div class="top-actions">
+          <label class="search-field"><span aria-hidden="true">⌕</span><input id="search-input" type="search" placeholder="Search your knowledge..." autocomplete="off" aria-label="Search notes"><kbd>⌘ K</kbd></label>
+          <button class="icon-button notification" id="notification-button" type="button" aria-label="Notifications">◌<i></i></button>
+          <div class="user-chip"><span class="avatar">S</span><span>Student</span></div>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="welcome-row" aria-labelledby="page-title">
+          <div><p class="eyebrow"><i></i> PERSONAL KNOWLEDGE SYSTEM <span id="today-label"></span></p><h1 id="page-title">Your mind, <em>in orbit.</em></h1><p class="welcome-copy">Every useful idea has a place. Pick up where curiosity left off.</p></div>
+          <button class="primary-button" id="create-note" type="button"><span>＋</span> Capture a thought</button>
+        </section>
+
+        <section class="stats-grid" aria-label="Knowledge base statistics">
+          <article class="stat-card cyan"><div class="stat-head">SAVED NOTES<span>▤</span></div><strong id="note-count">—</strong><p><i class="online-dot"></i>Ideas in your vault</p></article>
+          <article class="stat-card violet"><div class="stat-head">SUBJECTS<span>◈</span></div><strong id="subject-count">—</strong><p>Distinct learning paths</p></article>
+          <article class="stat-card pink"><div class="stat-head">KNOWLEDGE SIGNAL<span>⌁</span></div><strong><span id="learning-score">—</span><small> / 100</small></strong><p id="score-engine">A lightweight collection index</p></article>
+        </section>
+
+        <section class="library" aria-labelledby="notes-heading">
+          <div class="section-head"><div><p class="eyebrow small"><i></i> YOUR LIBRARY</p><h2 id="notes-heading">Recent knowledge</h2></div>
+            <div class="filters"><label for="subject-filter">SUBJECT</label><select id="subject-filter" aria-label="Filter by subject"><option value="">All subjects</option></select><button class="secondary-button" id="clear-filters" type="button">Clear filters</button></div>
+          </div>
+          <div class="list-meta"><span id="result-count">Loading notes</span><span><i class="online-dot"></i> STORED ON THIS DEVICE</span></div>
+          <div class="notes-grid" id="notes-grid" aria-live="polite" aria-busy="true"></div>
+          <div class="empty-state" id="empty-state" hidden><div class="orbit-mark"><i></i><b></b></div><h3 id="empty-title">Your vault is ready</h3><p id="empty-copy">Save the first idea you want to remember.</p><button id="empty-create" class="text-button" type="button">Create your first note <span>↗</span></button></div>
+        </section>
+        <footer class="footer"><span>MINDVAULT <i>·</i> PRIVATE BY DESIGN</span><span><i class="online-dot"></i> DATABASE CONNECTED</span></footer>
+      </div>
+    </main>
+  </div>
+
+  <dialog class="note-dialog" id="note-dialog" aria-labelledby="dialog-title">
+    <form id="note-form"><div class="dialog-head"><div><p class="eyebrow small"><i></i> KNOWLEDGE ENTRY</p><h2 id="dialog-title">Capture a thought</h2></div><button class="icon-button" id="close-dialog" type="button" aria-label="Close">×</button></div>
+      <label class="field-label" for="note-title">TITLE <span>REQUIRED</span></label><input class="form-input" id="note-title" name="title" maxlength="120" required placeholder="What did you learn?">
+      <div class="form-row"><div><label class="field-label" for="note-subject">SUBJECT</label><input class="form-input" id="note-subject" name="subject" maxlength="60" required value="General" placeholder="e.g. Biology"></div><div><label class="field-label" for="note-tags">TAGS <span>COMMA SEPARATED</span></label><input class="form-input" id="note-tags" name="tags" placeholder="cells, revision"></div></div>
+      <label class="field-label" for="note-content">YOUR NOTES</label><textarea class="form-input textarea" id="note-content" name="content" maxlength="12000" placeholder="Capture the idea in your own words..."></textarea>
+      <div class="dialog-actions"><span>Saved in your local MindVault database.</span><div><button class="secondary-button" id="cancel-dialog" type="button">Cancel</button><button class="primary-button" id="save-note" type="submit">Save note <span>↗</span></button></div></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <template id="note-template"><article class="note-card"><div class="note-top"><span class="note-subject"></span><time class="note-date"></time></div><h3 class="note-title"></h3><p class="note-content"></p><div class="note-tags"></div><div class="note-bottom"><span class="note-updated"></span><div><button class="note-action edit-note" type="button">Edit</button><button class="note-action delete-note" type="button">Delete</button></div></div></article></template>
+</body>
+</html>
